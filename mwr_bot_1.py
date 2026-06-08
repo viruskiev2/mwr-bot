@@ -102,7 +102,7 @@ async def ask_ai(user_id, user_text):
                 "X-Title": "MWR Life Assistant Bot"
             },
             json={
-                "model": "meta-llama/llama-3-8b-instruct:free",
+                "model": "google/gemini-flash-1.5:free",
                 "messages": messages
             }
         )
