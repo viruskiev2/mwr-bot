@@ -221,19 +221,20 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     user_text = update.message.text
     
-    # Отправляет в Телеграм статус "Макс печатает..." (typing), чтобы общение выглядело живым
     await context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
     
-    # Блок try-except для отлова ошибок. Если упадет сеть или сломается ИИ, бот не вылетит,
-    # а выполнит аварийный блок except.
     try:
-        # Вызываем функцию запроса к ИИ и ждем ее выполнения через await
         reply = await ask_ai(user_id, user_text)
         await update.message.reply_text(reply)
     except Exception as e:
-        # Записываем ошибку в логи Render для отладки
-        logging.error(f"Ошибка: {e}")
-        await update.message.reply_text("⚠️ Что-то пошло не так. Попробуй ещё раз!")
+        # Теперь мы не просто пишем "Ошибка", а выводим максимум инфы в логи Render
+        logging.error(f"⚠️ Произошла ошибка при запросе к ИИ: {e}")
+        
+        # Если ошибка связана с 'choices', мы проверяем, не сломалась ли история
+        if "chat_histories" in globals() and user_id in chat_histories:
+            logging.info(f"Последний статус истории для юзера: {chat_histories[user_id][-1:]}")
+            
+        await update.message.reply_text("⚠️ Сервер ИИ временно перегружен или недоступен. Попробуй задать вопрос ещё раз!")
 
 # =====================================================================
 # 6. ИНЖЕНЕРНАЯ МАГИЯ ЗАПУСКА ПОТОКОВ (ДЛЯ ДЕПЛОЯ И СЕМЕСТРА)
