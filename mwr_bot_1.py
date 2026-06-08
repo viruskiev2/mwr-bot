@@ -102,7 +102,7 @@ async def ask_ai(user_id, user_text):
                 "X-Title": "MWR Life Assistant Bot"
             },
             json={
-                "model": "microsoft/phi-3-medium-128k-instruct:free",
+                "model": "meta-llama/llama-3-8b-instruct:free",
                 "messages": messages
             }
         )
