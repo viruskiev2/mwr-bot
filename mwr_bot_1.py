@@ -1,8 +1,23 @@
 import os
 import logging
 import httpx
+from threading import Thread
+from flask import Flask
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+
+# --- НАСТРОЙКА FLASK ДЛЯ PING ---
+flask_app = Flask(__name__)
+
+@flask_app.route('/')
+def home():
+    return "Бот активен и работает! 🚀", 200
+
+def run_flask():
+    # Render передает порт в переменную окружения PORT
+    port = int(os.environ.get("PORT", 8080))
+    flask_app.run(host="0.0.0.0", port=port)
+# ---------------------------------
 
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
@@ -173,6 +188,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("⚠️ Что-то пошло не так. Попробуй ещё раз!")
 
 if __name__ == "__main__":
+    # 1. Запускаем Flask в отдельном потоке
+    Thread(target=run_flask, daemon=True).start()
+    print("✅ Flask веб-сервер для пинга запущен!")
+
+    # 2. Запускаем Телеграм-бота (основной процесс)
     app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("info", info))
