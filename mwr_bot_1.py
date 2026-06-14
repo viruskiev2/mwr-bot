@@ -20,7 +20,7 @@ def home():
 # 2. ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ
 # =====================================================================
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -72,7 +72,7 @@ def get_history(user_id):
     return chat_histories[user_id]
 
 # =====================================================================
-# 5. ИИ (OpenRouter)
+# 5. ИИ (GROQ)
 # =====================================================================
 async def ask_ai(user_id, user_text):
     history = get_history(user_id)
@@ -85,17 +85,16 @@ async def ask_ai(user_id, user_text):
 
     async with httpx.AsyncClient(timeout=30) as client:
         response = await client.post(
-            "https://openrouter.ai/api/v1/chat/completions",
+            "https://api.groq.com/openai/v1/chat/completions",
             headers={
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "https://github.com/viruskiev2",
-                "X-Title": "MWR Life Bot"
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json"
             },
             json={
-                "model": "mistralai/mistral-7b-instruct:free",
+                "model": "llama-3.1-8b-instant",
                 "messages": messages,
-                "temperature": 0.7
+                "temperature": 0.7,
+                "max_tokens": 1000
             }
         )
         
@@ -103,7 +102,7 @@ async def ask_ai(user_id, user_text):
         
         if "error" in data:
             error_msg = data["error"].get("message", "Неизвестная ошибка")
-            raise RuntimeError(f"OpenRouter Error: {error_msg}")
+            raise RuntimeError(f"Groq Error: {error_msg}")
             
         reply = data["choices"][0]["message"]["content"]
         history.append({"role": "assistant", "content": reply})
@@ -217,7 +216,7 @@ def start_bot_in_thread():
     app.add_handler(CommandHandler("reset", reset))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     
-    print("✅ Макс запущен и готов общаться!")
+    print("✅ Макс запущен на Groq и готов общаться!")
     loop.run_until_complete(app.run_polling(close_loop=False, stop_signals=None))
 
 bot_thread = Thread(target=start_bot_in_thread, daemon=True)
