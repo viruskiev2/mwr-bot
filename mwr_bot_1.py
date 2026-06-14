@@ -93,7 +93,7 @@ async def ask_ai(user_id, user_text):
                 "X-Title": "MWR Life Bot"
             },
             json={
-                "model": "meta-llama/llama-3.1-8b-instruct:free",
+                "model": "mistralai/mistral-7b-instruct:free",
                 "messages": messages,
                 "temperature": 0.7
             }
