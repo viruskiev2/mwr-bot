@@ -91,7 +91,7 @@ async def ask_ai(user_id, user_text):
                 "Content-Type": "application/json"
             },
             json={
-                "model": "llama-3.1-70b-versatile",
+                "model": "llama-3.1-8b-instant",
                 "messages": messages,
                 "temperature": 0.7,
                 "max_tokens": 1000
@@ -227,7 +227,7 @@ def start_bot_in_thread():
     app.add_handler(CommandHandler("reset", reset))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     
-    print("✅ Макс запущен на Groq и готов общаться!")
+    print("✅ Макс запущен и готов общаться!")
     loop.run_until_complete(app.run_polling(close_loop=False, stop_signals=None))
 
 bot_thread = Thread(target=start_bot_in_thread, daemon=True)
