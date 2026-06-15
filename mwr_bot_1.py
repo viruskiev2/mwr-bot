@@ -121,6 +121,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "💳 /prices — цены на членство\n"
         "💼 /business — как зарабатывать\n"
         "🔗 /links — официальные ссылки\n"
+        "🎉 /join — присоединиться\n"
         "🔄 /reset — очистить историю\n\n"
         "Или просто напиши вопрос — отвечу честно! 🚀"
     )
@@ -182,6 +183,15 @@ async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(text, parse_mode="Markdown")
 
+async def join(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = (
+        "🎉 *Готов присоединиться?*\n\n"
+        "Если ты готов, присоединяйтесь к MWR Life! 🌍\n\n"
+        "🔗 https://www.mwrlife.com/Ihor18/join\n\n"
+        "Вопросы? Я здесь! 😊"
+    )
+    await update.message.reply_text(text, parse_mode="Markdown")
+
 async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_histories[update.effective_user.id] = []
     await update.message.reply_text("✅ История очищена! 🚀")
@@ -213,6 +223,7 @@ def start_bot_in_thread():
     app.add_handler(CommandHandler("prices", prices))
     app.add_handler(CommandHandler("business", business))
     app.add_handler(CommandHandler("links", links))
+    app.add_handler(CommandHandler("join", join))
     app.add_handler(CommandHandler("reset", reset))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     
