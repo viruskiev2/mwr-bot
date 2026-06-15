@@ -91,7 +91,7 @@ async def ask_ai(user_id, user_text):
                 "Content-Type": "application/json"
             },
             json={
-                "model": "groq/compound-mini",
+                "model": "mixtral-8x7b-32768",
                 "messages": messages,
                 "temperature": 0.7,
                 "max_tokens": 1000
