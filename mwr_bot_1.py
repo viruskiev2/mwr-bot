@@ -91,7 +91,7 @@ async def ask_ai(user_id, user_text):
                 "Content-Type": "application/json"
             },
             json={
-                "model": "llama-3.1-8b-instant",
+                "model": "groq/compound-mini",
                 "messages": messages,
                 "temperature": 0.7,
                 "max_tokens": 1000
